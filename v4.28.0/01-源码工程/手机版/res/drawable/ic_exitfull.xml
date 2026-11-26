@@ -1,0 +1,19 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!--
+      【v4.26.0】手机版退出全屏角标重绘 —— 只调宽度方向，高度方向一行未动。
+
+      【与 ic_full 的严格对偶】
+        · 语义保持"四角向内收拢"（退出 = 角标朝中心），
+          与 ic_full 的"角标贴外缘"（进入 = 角标朝四角）互为镜像；
+        · 横向包围盒 4.8..19.2、纵向 4..20，与 ic_full 完全一致
+          → 进出全屏切换时，图形在 24dp 圆钮里的位置与呼吸感都不会跳动；
+        · 笔画同为 1.6 单位、臂长同为 4.4 单位，两态视觉重量对等。
+    -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8 4h1.6v4.4H4.8V6.8H8zM16 4h-1.6v4.4h4.8V6.8H16zM8 20h1.6v-4.4H4.8v1.6H8zM16 20h-1.6v-4.4h4.8v1.6H16z" />
+</vector>
