@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 【v4.36.0】转发：圆头粗线弯箭头 + 圆角箭头尖，2.6 描边饱满圆润；
+     stroke 同样受 setColorFilter 着色，浅色模式下可随主文字色变深 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M3.6,17.6C4.9,12.3 8.2,9.5 13.3,9.5h5.2"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M15.2,5.3l4.5,4.2 -4.5,4.2"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>
