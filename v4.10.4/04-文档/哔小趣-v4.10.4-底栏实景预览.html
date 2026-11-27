@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>哔小趣 v4.10.4 · 「我的」页底部实景（底栏）</title>
+<style>
+  :root{
+    --bg:#16181d; --card:#1f2229; --line:#2a2f38; --fg:#e8eaf0; --sub:#9aa0ab; --acc:#fb7299;
+    --pilltop:#3a3d46; --pillbot:#33353d; --off:#9b9fa8;
+  }
+  .wrap.light{
+    --bg:#f3f4f6; --card:#ffffff; --line:#e9ecf1; --fg:#18191c; --sub:#61666d;
+    --pilltop:#fdeef3; --pillbot:#fce7ee; --off:#6e747d;
+  }
+  *{box-sizing:border-box; -webkit-font-smoothing:antialiased;}
+  body{margin:0;background:#0d0e11;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+       padding:22px 0 26px;display:flex;gap:22px;justify-content:center;align-items:flex-start;}
+  .wrap{width:420px; height:760px; position:relative; background:var(--bg); overflow:hidden;
+        border-radius:2px;}
+  .content{position:absolute; inset:0; padding:0 16px; color:var(--fg);}
+  .hint{font-size:11px; color:var(--sub); padding:16px 0 10px; letter-spacing:.3px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; margin-bottom:12px;}
+  .grid{display:flex; padding:14px 0;}
+  .grid div{flex:1; text-align:center; font-size:11.5px; color:var(--fg);}
+  .grid i{display:block; width:34px; height:34px; margin:0 auto 6px; border-radius:10px;
+          background:color-mix(in srgb, var(--acc) 18%, transparent);}
+  .row{display:flex; align-items:center; height:52px; padding:0 14px; font-size:13.5px; color:var(--fg);}
+  .row + .row{border-top:1px solid var(--line);}
+  .row span{margin-left:12px;}
+  .row .ic{width:20px;height:20px;border-radius:6px;background:color-mix(in srgb, var(--acc) 55%, transparent);}
+  .row em{margin-left:auto; font-style:normal; font-size:11.5px; color:var(--sub);}
+  .login{margin-top:2px; height:48px; border-radius:24px; background:var(--acc);
+         color:#fff; font-size:14px; display:flex; align-items:center; justify-content:center;}
+  .tail{height:110px;}
+
+  /* 底栏 */
+  .nav{position:absolute; left:14px; right:14px; bottom:18px; height:66px; border-radius:33px;
+       background:var(--bg);
+       box-shadow:0 2px 7px rgba(0,0,0,.06);
+       display:flex; align-items:center; padding:6px 7px;}
+  .wrap.light .nav{background:linear-gradient(180deg,#ffffff,#e7eaf1);
+       box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 1px rgba(0,0,0,.05),
+                  0 5px 13px rgba(0,0,0,.12), 0 12px 26px rgba(0,0,0,.10);}
+  .nav::after{content:''; position:absolute; inset:0 0 auto 0; height:9px; border-radius:33px 33px 0 0;
+       background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,0)); pointer-events:none;}
+  .cell{flex:1; height:54px; padding:0 4px; display:flex; position:relative; z-index:2;}
+  .pill{flex:1; border-radius:20px; display:flex; flex-direction:column;
+        align-items:center; justify-content:center; gap:3px;}
+  .pill svg{width:24px;height:24px;display:block;}
+  .pill b{font-size:11px; line-height:1; font-weight:400; letter-spacing:.3px;}
+  .pill.on{background:linear-gradient(180deg,var(--pilltop),var(--pillbot));
+           box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);}
+  .wrap.light .pill.on{box-shadow:inset 0 0 0 1px rgba(251,114,153,.10);}
+  .pill{color:var(--off);}
+  .pill.on{color:var(--acc);}
+  .cap{width:420px; text-align:center; font-size:11px; color:#6f757f; margin-top:8px;}
+  .col{display:flex;flex-direction:column;align-items:center;}
+</style>
+</head>
+<body>
+
+<div class="col">
+  <div class="wrap" data-theme="dark">
+    <div class="content">
+      <div class="hint">共 12 件缓存 · 已用 1.8 GB</div>
+      <div class="card">
+        <div class="grid">
+          <div><i></i>缓存</div><div><i></i>历史</div><div><i></i>收藏</div>
+          <div><i></i>稍后再看</div><div><i></i>消息</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row"><div class="ic"></div><span>设置</span><em>›</em></div>
+        <div class="row"><div class="ic"></div><span>游戏厅</span><em>›</em></div>
+        <div class="row"><div class="ic"></div><span>留声机</span><em>›</em></div>
+      </div>
+      <div class="login">登录 / 注册</div>
+      <div class="tail"></div>
+    </div>
+    <div class="nav" data-active="mine"></div>
+  </div>
+  <div class="cap">深色 · 「我的」页滚到底</div>
+</div>
+
+<div class="col">
+  <div class="wrap light" data-theme="light">
+    <div class="content">
+      <div class="hint">共 12 件缓存 · 已用 1.8 GB</div>
+      <div class="card">
+        <div class="grid">
+          <div><i></i>缓存</div><div><i></i>历史</div><div><i></i>收藏</div>
+          <div><i></i>稍后再看</div><div><i></i>消息</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row"><div class="ic"></div><span>设置</span><em>›</em></div>
+        <div class="row"><div class="ic"></div><span>游戏厅</span><em>›</em></div>
+        <div class="row"><div class="ic"></div><span>留声机</span><em>›</em></div>
+      </div>
+      <div class="login">登录 / 注册</div>
+      <div class="tail"></div>
+    </div>
+    <div class="nav" data-active="mine"></div>
+  </div>
+  <div class="cap">浅色 · 同一位置</div>
+</div>
+
+<script>
+const IC = {
+  home:'<svg viewBox="0 0 24 24"><path d="M4 10.6 12 4l8 6.6V19a1.4 1.4 0 0 1-1.4 1.4h-4.2v-5.6h-4.8v5.6H5.4A1.4 1.4 0 0 1 4 19v-8.4Z" fill="currentColor"/></svg>',
+  dyn:'<svg viewBox="0 0 24 24"><path d="M12 3.6l2.5 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9 6.9 19.6l1-5.8-4.2-4.1 5.8-.8L12 3.6Z" fill="currentColor"/></svg>',
+  mine:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.9" fill="currentColor"/><path d="M4.6 20.4c0-3.9 3.3-6.3 7.4-6.3s7.4 2.4 7.4 6.3H4.6Z" fill="currentColor"/></svg>'
+};
+const LB={home:'首页',dyn:'动态',mine:'我的'};
+document.querySelectorAll('.nav').forEach(n=>{
+  const a=n.dataset.active;
+  n.innerHTML=['home','dyn','mine'].map(k=>
+    `<div class="cell"><div class="pill ${k===a?'on':''}">${IC[k]}<b>${LB[k]}</b></div></div>`
+  ).join('');
+});
+</script>
+</body>
+</html>

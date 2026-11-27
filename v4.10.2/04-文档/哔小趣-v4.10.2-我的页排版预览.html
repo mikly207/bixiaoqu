@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>哔小趣 v4.10.2 · 我的页排版预览</title>
+<style>
+  :root{
+    --bg:#16181d; --card:#1f2229; --fg:#e8eaf0; --sub:#9aa0ab; --acc:#fb7299;
+    --line:#2f343e; --chip:#41464f; --cardline:#2a2f38; --glass:rgba(255,255,255,.18);
+  }
+  body.light{
+    --bg:#f3f4f6; --card:#ffffff; --fg:#18191c; --sub:#61666d; --acc:#fb7299;
+    --line:#ebedf1; --chip:#d2d6de; --cardline:#e9ecf1; --glass:rgba(255,255,255,.55);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0; padding:28px 16px 40px; background:#0b0c0f; color:#e8eaf0;
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    display:flex; flex-direction:column; align-items:center; gap:18px;
+  }
+  .bar{display:flex; gap:10px; align-items:center; font-size:13px; color:#8b91a0;}
+  .bar button{
+    background:#1e2129; color:#dfe3ea; border:1px solid #2c3038; border-radius:999px;
+    padding:6px 14px; font-size:12.5px; cursor:pointer;
+  }
+  .bar button:hover{border-color:#4a505b;}
+
+  /* 手机外壳 */
+  .phone{
+    width:360px; height:760px; border-radius:34px; background:var(--bg);
+    border:8px solid #24262c; box-shadow:0 24px 60px rgba(0,0,0,.55);
+    overflow:hidden; position:relative; color:var(--fg);
+    transition:background .25s;
+  }
+  .status{
+    height:26px; display:flex; align-items:center; justify-content:space-between;
+    padding:0 16px; font-size:10.5px; color:var(--fg); opacity:.85; letter-spacing:.3px;
+  }
+  .scroll{height:calc(100% - 26px); overflow-y:auto; overflow-x:hidden; padding-bottom:96px;}
+  .scroll::-webkit-scrollbar{width:0}
+
+  /* 全局顶栏 */
+  .topbar{display:flex; align-items:center; gap:10px; padding:6px 14px 10px;}
+  .me{width:32px;height:32px;border-radius:50%;flex:0 0 32px;
+      background:linear-gradient(140deg,#ffd0d9,#ff9db4 45%,#8fb7ff);}
+  .search{
+    flex:1; height:32px; border-radius:16px; background:var(--card);
+    display:flex; align-items:center; gap:6px; padding:0 12px;
+    font-size:11.5px; color:var(--sub);
+  }
+  .mail{width:32px;height:32px;border-radius:50%;background:var(--card);
+        display:flex;align-items:center;justify-content:center;}
+  .mail svg{width:15px;height:15px;stroke:var(--fg);fill:none;stroke-width:1.7}
+
+  /* 头图 */
+  .banner{
+    height:158px; position:relative; overflow:hidden;
+    background:linear-gradient(135deg,
+      color-mix(in srgb, var(--acc) 32%, var(--bg)) 0%,
+      color-mix(in srgb, var(--acc) 8%, var(--bg)) 55%,
+      var(--bg) 100%);
+  }
+  .deco{
+    position:absolute; width:200px;height:200px;border-radius:50%;
+    right:-56px; top:-86px; background:rgba(255,255,255,.09);
+  }
+  .watermark{
+    position:absolute; right:-26px; top:-18px; width:178px; height:178px;
+    border-radius:50%; opacity:.16; overflow:hidden;
+    background:
+      radial-gradient(circle at 52% 40%, #ffd6e0 0 22%, transparent 23%),
+      radial-gradient(circle at 52% 78%, #7c8bd8 0 34%, transparent 35%),
+      linear-gradient(140deg,#b9c6ef,#e7b9c8);
+    filter:blur(1px);
+  }
+  body.light .watermark{opacity:.12}
+  body.light .banner{
+    background:linear-gradient(135deg,#ffd0de 0%,#ffe8ef 52%,var(--bg) 100%);
+  }
+  .fade{
+    position:absolute; inset:0;
+    background:linear-gradient(to top, var(--bg) 0%, transparent 58%, transparent 100%);
+  }
+  .banner-top{
+    position:absolute; right:12px; top:10px; display:flex; gap:8px;
+  }
+  .gbtn{
+    width:34px;height:34px;border-radius:50%; background:var(--glass);
+    display:flex;align-items:center;justify-content:center;
+    backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.14);
+  }
+  .gbtn svg{width:17px;height:17px;stroke:var(--fg);fill:none;stroke-width:1.7;
+            stroke-linecap:round;stroke-linejoin:round}
+
+  /* 头像 + 昵称 + 编辑资料 */
+  .profile{display:flex; align-items:flex-start; padding:0 16px;}
+  .avatar{
+    width:88px;height:88px;border-radius:50%;margin-top:-44px;flex:0 0 88px;
+    border:3px solid var(--bg);
+    background:linear-gradient(140deg,#ffd0d9,#ff9db4 45%,#8fb7ff);
+    box-shadow:0 4px 14px rgba(0,0,0,.28);
+  }
+  .names{flex:1; min-width:0; margin-left:13px; margin-top:9px;}
+  .name-row{display:flex; align-items:center; gap:6px;}
+  .name{font-size:18.5px; font-weight:700; letter-spacing:.2px;
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .vip{
+    flex:0 0 auto; font-size:9.5px; color:#fff; background:var(--acc);
+    padding:2px 6px; border-radius:7px; letter-spacing:.2px;
+  }
+  .badges{display:flex; gap:6px; margin-top:6px;}
+  .badge{
+    font-size:9.5px; color:var(--sub); border:1px solid var(--chip);
+    border-radius:7px; padding:2px 6px;
+  }
+  .edit{
+    flex:0 0 auto; height:29px; padding:0 12px; margin-top:13px; margin-left:8px;
+    border:1px solid var(--chip); border-radius:15px; background:transparent;
+    display:flex; align-items:center; font-size:11.5px; color:var(--fg);
+  }
+
+  /* 三栏数据卡 */
+  .stats{
+    margin:14px 16px 0; background:var(--card); border:1px solid var(--cardline); border-radius:14px;
+    display:flex; align-items:center; padding:12px 0;
+  }
+  .stat{flex:1; text-align:center;}
+  .stat b{display:block; font-size:17px; font-weight:700; letter-spacing:.2px;}
+  .stat span{display:block; font-size:10.5px; color:var(--sub); margin-top:3px;}
+  .vline{width:1px; height:22px; background:var(--line);}
+
+  /* 等级 */
+  .lv{display:flex; align-items:center; padding:14px 16px 0;}
+  .lvtag{font-size:9.5px; font-weight:700; color:#fff; background:#f0773c;
+         padding:2px 6px; border-radius:4px; letter-spacing:.3px;}
+  .bar{flex:1; height:5px; border-radius:3px; background:var(--line); margin-left:10px; overflow:hidden;}
+  .bar i{display:block; height:100%; width:38%; border-radius:3px; background:#f0773c;}
+  .exp{width:66px; text-align:right; font-size:10.5px; color:var(--sub); margin-left:8px;}
+
+  /* 签名 */
+  .sign{display:flex; align-items:flex-start; padding:12px 16px 0;}
+  .sign p{margin:0; flex:1; font-size:12.5px; line-height:1.65;}
+  .sign em{font-style:normal; font-size:11.5px; color:var(--sub); margin-left:10px;}
+  .sign .editpill{
+    flex:0 0 auto; height:28px; padding:0 12px; margin-left:10px;
+    display:flex; align-items:center; border:1px solid var(--chip);
+    border-radius:14px; font-size:11.5px; color:var(--fg);
+  }
+  .uid{padding:7px 16px 0; font-size:11px; color:#8a9099;}
+
+  /* 分区 tab */
+  .tabs{display:flex; padding:12px 12px 0;}
+  .tab{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;
+       padding:8px 0 7px; font-size:14.5px; color:var(--sub);}
+  .tab.on{color:var(--acc); font-weight:700;}
+  .tab i{width:20px;height:3px;border-radius:2px;background:var(--acc);opacity:0}
+  .tab.on i{opacity:1}
+  .tabline{height:1px;background:var(--line); margin-top:0;}
+
+  /* 视频头 + 网格 */
+  .vhead{display:flex; align-items:center; padding:16px 16px 4px;}
+  .vhead b{flex:1; font-size:15px;}
+  .vhead span{font-size:11.5px; color:var(--sub);}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px 16px 0;}
+  .vcard{background:var(--card); border:1px solid var(--cardline); border-radius:10px; overflow:hidden;}
+  .thumb{position:relative; aspect-ratio:16/9;
+    background:linear-gradient(135deg,#3a4152,#252a35);}
+  body.light .thumb{background:linear-gradient(135deg,#dfe4ec,#eef1f6)}
+  .thumb .dur{
+    position:absolute; right:5px; bottom:5px; font-size:9px; color:#fff;
+    background:rgba(0,0,0,.6); border-radius:3px; padding:1px 4px;
+  }
+  .vtitle{font-size:12px; line-height:1.45; padding:7px 8px 0; height:38px; overflow:hidden;}
+  .vmeta{font-size:9.5px; color:var(--sub); padding:4px 8px 9px;}
+
+  /* 常用功能 */
+  .sect{display:flex; align-items:center; padding:24px 16px 10px; font-size:14px; font-weight:700;}
+  .entries{
+    margin:0 16px; background:var(--card); border:1px solid var(--cardline); border-radius:14px;
+    display:flex; padding:16px 0 14px;
+  }
+  .entry{flex:1; display:flex; flex-direction:column; align-items:center; gap:7px;}
+  .entry svg{width:25px;height:25px;stroke:var(--acc);fill:none;stroke-width:1.7;
+             stroke-linecap:round;stroke-linejoin:round}
+  .entry span{font-size:11px; color:var(--sub);}
+
+  /* 分组卡片 */
+  .group{margin:12px 16px 0; background:var(--card); border:1px solid var(--cardline); border-radius:14px; padding:4px 0;}
+  .grow{display:flex; align-items:center; padding:12px 14px 12px 16px;}
+  .gicon{width:26px; height:26px; display:flex; align-items:center; justify-content:center;}
+  .gicon svg{width:21px;height:21px;fill:none;stroke-width:1.7;
+             stroke-linecap:round;stroke-linejoin:round}
+  .gtext{flex:1; margin-left:12px;}
+  .gtext b{display:block; font-size:14.5px; font-weight:500;}
+  .gtext span{display:block; font-size:11px; color:var(--sub); margin-top:2px;}
+  .grow .arrow{font-size:20px; color:#6f7581; line-height:1;}
+  .gdiv{height:1px; background:var(--line); margin-left:54px;}
+
+  .cache{padding:14px 16px 0; font-size:11.5px; color:var(--sub);}
+  .login{
+    margin:18px 16px 0; height:46px; border-radius:12px; background:var(--acc);
+    color:#fff; font-size:14.5px; display:flex; align-items:center; justify-content:center;
+  }
+  .diag{text-align:center; font-size:11px; color:#9aa0a8; padding:16px 0 10px;}
+
+  /* 悬浮三格底栏 */
+  .nav{
+    position:absolute; left:16px; right:16px; bottom:14px; height:66px; border-radius:33px;
+    background:linear-gradient(180deg, rgba(46,51,64,.95), rgba(22,24,31,.94));
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow:0 10px 26px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.32),
+               inset 0 -1px 0 rgba(0,0,0,.4);
+    display:flex; align-items:center; backdrop-filter:blur(14px); overflow:hidden;
+  }
+  body.light .nav{
+    background:linear-gradient(180deg,#ffffff,#e9ecf2);
+    border-color:rgba(0,0,0,.06);
+    box-shadow:0 10px 24px rgba(23,26,33,.14), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .nav::before{
+    content:""; position:absolute; left:6%; right:6%; top:0; height:62%;
+    background:linear-gradient(180deg,rgba(255,255,255,.16),transparent);
+    pointer-events:none;
+  }
+  .navitem{flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+           position:relative; z-index:1;}
+  .navitem svg{width:24px;height:24px;fill:none;stroke:var(--sub);stroke-width:1.8;
+               stroke-linecap:round;stroke-linejoin:round}
+  .navitem span{font-size:11.5px; color:var(--sub);}
+  .navitem.on svg{stroke:var(--acc)}
+  .navitem.on span{color:var(--acc); font-weight:600}
+
+  .hint{max-width:760px; font-size:12.5px; color:#7f8697; line-height:1.8; text-align:center;}
+  .hint b{color:#b9c0cf;}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <button id="themeBtn">切换浅色模式</button>
+    <span>哔小趣 v4.10.2 · 「我的」页排版（示意，1dp≈1px）</span>
+  </div>
+
+  <div class="phone">
+    <div class="status"><span>14:47</span><span>5G ⚡ 56</span></div>
+    <div class="scroll">
+
+      <!-- 全局顶栏 -->
+      <div class="topbar">
+        <div class="me"></div>
+        <div class="search">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>
+          </svg>
+          搜索你感兴趣的内容
+        </div>
+        <div class="mail">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.6 7.2 12 13l8.4-5.8"/></svg>
+        </div>
+      </div>
+
+      <!-- 头图 -->
+      <div class="banner">
+        <div class="deco"></div>
+        <div class="watermark"></div>
+        <div class="fade"></div>
+        <div class="banner-top">
+          <div class="gbtn">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.1 12.9a7.6 7.6 0 0 0 0-1.8l2-1.6-1.9-3.3-2.4 1a7.6 7.6 0 0 0-1.6-.9l-.4-2.5h-3.8l-.4 2.5c-.6.2-1.1.5-1.6.9l-2.4-1L4.7 9.5l2 1.6a7.6 7.6 0 0 0 0 1.8l-2 1.6 1.9 3.3 2.4-1c.5.4 1 .7 1.6.9l.4 2.5h3.8l.4-2.5c.6-.2 1.1-.5 1.6-.9l2.4 1 1.9-3.3-2-1.6z"/></svg>
+          </div>
+          <div class="gbtn">
+            <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.7" fill="currentColor" stroke="none"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 头像 + 昵称 + 编辑资料 -->
+      <div class="profile">
+        <div class="avatar"></div>
+        <div class="names">
+          <div class="name-row">
+            <div class="name">1-Dynamo</div>
+            <div class="vip">年度大会员</div>
+          </div>
+          <div class="badges">
+            <div class="badge">粉丝团</div>
+            <div class="badge">成就勋章</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 三栏数据 -->
+      <div class="stats">
+        <div class="stat"><b>120</b><span>粉丝</span></div>
+        <div class="vline"></div>
+        <div class="stat"><b>140</b><span>关注</span></div>
+        <div class="vline"></div>
+        <div class="stat"><b>1.2万</b><span>获赞</span></div>
+      </div>
+
+      <!-- 等级 -->
+      <div class="lv">
+        <div class="lvtag">LV5</div>
+        <div class="bar"><i></i></div>
+        <div class="exp">7200/10800</div>
+      </div>
+
+      <!-- 签名 -->
+      <div class="sign"><p>纵有疾风起，人生不言弃</p><em class="editpill">编辑资料</em></div>
+      <div class="uid">UID 1886914059</div>
+
+      <!-- 常用功能 -->
+      <div class="sect">常用功能</div>
+      <div class="entries">
+        <div class="entry">
+          <svg viewBox="0 0 24 24"><path d="M12 3v11"/><path d="M8 9.5 12 14l4-4.5"/><path d="M4 17.5v1A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5v-1"/></svg>
+          <span>离线缓存</span>
+        </div>
+        <div class="entry">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg>
+          <span>历史记录</span>
+        </div>
+        <div class="entry">
+          <svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-9.4A4.1 4.1 0 0 1 12 7.6a4.1 4.1 0 0 1 7.5 3c0 4.8-7.5 9.4-7.5 9.4z"/></svg>
+          <span>我的收藏</span>
+        </div>
+        <div class="entry">
+          <svg viewBox="0 0 24 24"><path d="M6.5 4h11A1.5 1.5 0 0 1 19 5.5v15l-7-4-7 4v-15A1.5 1.5 0 0 1 6.5 4z"/></svg>
+          <span>稍后再看</span>
+        </div>
+        <div class="entry">
+          <svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H10l-4 3.5V16H6.5A2.5 2.5 0 0 1 4 13.5z"/></svg>
+          <span>消息</span>
+        </div>
+      </div>
+
+      <!-- 设置 / 游戏厅 / 留声机 -->
+      <div class="group">
+        <div class="grow">
+          <div class="gicon"><svg viewBox="0 0 24 24" stroke="var(--fg)"><circle cx="12" cy="12" r="3"/><path d="M19.1 12.9a7.6 7.6 0 0 0 0-1.8l2-1.6-1.9-3.3-2.4 1a7.6 7.6 0 0 0-1.6-.9l-.4-2.5h-3.8l-.4 2.5c-.6.2-1.1.5-1.6.9l-2.4-1L4.7 9.5l2 1.6a7.6 7.6 0 0 0 0 1.8l-2 1.6 1.9 3.3 2.4-1c.5.4 1 .7 1.6.9l.4 2.5h3.8l.4-2.5c.6-.2 1.1-.5 1.6-.9l2.4 1 1.9-3.3-2-1.6z"/></svg></div>
+          <div class="gtext"><b>设置</b><span>外观 / 播放 / 缓存 / 账号</span></div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="gdiv"></div>
+        <div class="grow">
+          <div class="gicon"><svg viewBox="0 0 24 24" stroke="#fb7299"><rect x="2.5" y="7.5" width="19" height="9.5" rx="4.5"/><path d="M7.5 10.2v4.2M5.4 12.3h4.2"/><circle cx="16" cy="11.4" r=".95" fill="#fb7299" stroke="none"/><circle cx="18.1" cy="13.3" r=".95" fill="#fb7299" stroke="none"/></svg></div>
+          <div class="gtext"><b>游戏厅</b><span>十款经典小游戏 · 离线可玩</span></div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="gdiv"></div>
+        <div class="grow">
+          <div class="gicon"><svg viewBox="0 0 24 24" stroke="#3fa9e8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M12 2.6a9.4 9.4 0 0 1 0 18.8"/></svg></div>
+          <div class="gtext"><b>留声机</b><span>本地音乐 · 唤起 QQ 音乐</span></div>
+          <div class="arrow">›</div>
+        </div>
+      </div>
+
+      <!-- 分区 tab -->
+      <div class="tabs">
+        <div class="tab on">主页<i></i></div>
+        <div class="tab">动态<i></i></div>
+        <div class="tab">投稿<i></i></div>
+        <div class="tab">收藏<i></i></div>
+      </div>
+      <div class="tabline"></div>
+
+      <!-- 视频 -->
+      <div class="vhead"><b>视频 30+</b><span>更多 ›</span></div>
+      <div class="grid">
+        <div class="vcard">
+          <div class="thumb"><div class="dur">00:13</div></div>
+          <div class="vtitle">【原神】这一刀，我等了三年</div>
+          <div class="vmeta">▶ 63 · 弹幕 0</div>
+        </div>
+        <div class="vcard">
+          <div class="thumb"><div class="dur">00:10</div></div>
+          <div class="vtitle">随手录的一段夜景，挺安静的</div>
+          <div class="vmeta">▶ 31 · 弹幕 0</div>
+        </div>
+      </div>
+
+      <div class="cache">离线缓存：3 个视频（MP4，保存在 电影/BiliAudio）</div>
+      <div class="login">退出登录</div>
+      <div class="diag">崩溃日志</div>
+    </div>
+
+    <!-- 底栏 -->
+    <div class="nav">
+      <div class="navitem on">
+        <svg viewBox="0 0 24 24"><path d="M4 10.6 12 4l8 6.6V20a1 1 0 0 1-1 1h-4.6v-6H9.6v6H5a1 1 0 0 1-1-1z"/></svg>
+        <span>首页</span>
+      </div>
+      <div class="navitem">
+        <svg viewBox="0 0 24 24"><path d="M12 3.4l2.6 5.5 5.9.8-4.3 4.2 1 6-5.2-2.8-5.2 2.8 1-6L3.5 9.7l5.9-.8z"/></svg>
+        <span>动态</span>
+      </div>
+      <div class="navitem">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.9"/><path d="M4.6 20.3a7.6 7.6 0 0 1 14.8 0"/></svg>
+        <span>我的</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint">
+    <b>本次排版调整：</b>编辑资料移到签名右侧的小胶囊 · 粉丝/关注/获赞从昵称列里拿出来铺成整宽三栏 ·
+    头图改为渐变+头像弱水印（不再重复一张大头像）· 投稿卡加卡片底与信息分层 ·
+    设置/游戏厅/留声机合并为一张三行卡 · 页面底部留 98dp 避开悬浮底栏
+  </div>
+
+<script>
+  var btn = document.getElementById('themeBtn');
+  btn.onclick = function () {
+    document.body.classList.toggle('light');
+    btn.textContent = document.body.classList.contains('light') ? '切换深色模式' : '切换浅色模式';
+  };
+</script>
+</body>
+</html>

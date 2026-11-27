@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>哔小趣 v4.10.6 · 底栏 / 楼中楼 / 弹幕设置</title>
+<style>
+  :root{
+    --bg:#16181d; --card:#1f2229; --fg:#e9ecf2; --sub:#9b9fa8;
+    --acc:#fb7299; --pill1:#3a3d46; --pill2:#33353d; --line:#2a2f38;
+  }
+  *{box-sizing:border-box; -webkit-font-smoothing:antialiased;}
+  html,body{margin:0; background:#0b0c0f; color:var(--fg);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}
+  .wrap{display:flex; gap:34px; padding:34px 38px 40px; align-items:flex-start;}
+  .col{width:392px;}
+  .cap{font-size:12.5px; color:#6f7783; letter-spacing:.4px; margin:0 0 10px 4px;}
+  .cap b{color:#c9ced8; font-weight:600;}
+  .phone{
+    width:392px; height:700px; background:var(--bg); border-radius:30px;
+    border:1px solid #23262e; overflow:hidden; position:relative;
+    box-shadow:0 20px 50px rgba(0,0,0,.55);
+  }
+  /* ============ 模拟视频页 ============ */
+  .video{height:214px; background:linear-gradient(135deg,#241a22,#15171c 60%,#1b2028);
+    position:relative; overflow:hidden;}
+  .video .veil{position:absolute; inset:0;
+    background:
+      radial-gradient(340px 140px at 78% 10%, rgba(251,114,153,.22), transparent 70%),
+      radial-gradient(280px 120px at 10% 90%, rgba(90,140,255,.16), transparent 70%);}
+  .video .bar{position:absolute; left:0; right:0; bottom:0; height:3px; background:rgba(255,255,255,.16);}
+  .video .bar i{display:block; height:100%; width:42%; background:var(--acc);}
+  .video .ctl{position:absolute; left:12px; right:12px; bottom:12px; display:flex;
+    align-items:center; gap:8px; font-size:10px; color:#cfd4de;}
+  .vtitle{padding:12px 16px 0; font-size:14.5px; font-weight:700; line-height:1.35;}
+  .vmeta{padding:6px 16px 12px; font-size:11px; color:var(--sub);}
+  .cmt-head{display:flex; align-items:center; gap:8px; padding:10px 16px 8px; border-top:1px solid #20242b;}
+  .cmt-head h3{margin:0; font-size:14px; }
+  .cmt-head span{font-size:11px; color:var(--sub);}
+  .cmt{display:flex; gap:10px; padding:11px 16px; border-bottom:1px solid #1c2027;}
+  .av{width:32px; height:32px; border-radius:50%; flex:0 0 auto;
+    background:linear-gradient(140deg,#4b5566,#2a303b);}
+  .cbody{flex:1; min-width:0;}
+  .cname{font-size:11.5px; color:#aeb4c0;}
+  .ctext{font-size:12.5px; margin-top:4px; line-height:1.5;}
+  .cmeta{font-size:10px; color:#6f7581; margin-top:6px; display:flex; gap:14px;}
+  .thread{margin-left:42px; margin-top:8px;}
+  .tmore{font-size:11.5px; color:#7e96ba; padding:4px 0 2px;}
+  .tsub{display:flex; gap:8px; padding:7px 0 2px;}
+  .tsub .av{width:21px; height:21px;}
+  .tsub .tn{font-size:11px; color:#7fa8d8; margin-right:3px;}
+  .tsub .tx{font-size:12px; line-height:1.45;}
+  .tsub .tm{font-size:9.5px; color:#6f7581; margin-top:3px;}
+
+  /* ============ 底栏 52dp ============ */
+  .nav{
+    position:absolute; left:14px; right:14px; bottom:10px; height:52px;
+    border-radius:26px; background:#16181d;
+    box-shadow:0 2px 7px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.055);
+    display:flex; align-items:center; padding:3px 6px; gap:0;
+  }
+  .cell{flex:1; height:46px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:2px; border-radius:23px;}
+  .cell.on{background:linear-gradient(180deg,#3a3d46,#33353d);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);}
+  .cell svg{width:20px; height:20px;}
+  .cell b{font-size:9.5px; font-weight:400; color:#9b9fa8;}
+  .cell.on b{color:var(--acc);}
+
+  /* ============ 弹幕面板 ============ */
+  .sheet{width:392px; background:#1c1c22; border-radius:16px; padding:14px 16px 12px;
+    box-shadow:0 20px 50px rgba(0,0,0,.5);}
+  .sheet h4{margin:0; font-size:16px;}
+  .sheet .sub{font-size:10.5px; color:rgba(255,255,255,.40); margin:3px 0 2px;}
+  .lab{font-size:12px; color:rgba(255,255,255,.60); margin:12px 0 6px;}
+  .dots{display:flex; gap:5px;}
+  .dot{width:28px; height:28px; border-radius:50%; border:1px solid rgba(255,255,255,.20);}
+  .dot.rainbow{background:linear-gradient(90deg,#ff6b6b,#ffd166,#5fd3a6,#4fc3f7);}
+  .dot.sel{border:2.5px solid #fff;}
+  .row{margin-top:9px;}
+  .rh{display:flex; justify-content:space-between; font-size:12px;}
+  .rh em{font-style:normal; color:var(--acc);}
+  .rh span{color:rgba(255,255,255,.60);}
+  .track{height:26px; display:flex; align-items:center; position:relative;}
+  .track .line{height:4px; width:100%; border-radius:2px; background:#3a3d46; position:relative;}
+  .track .fill{position:absolute; left:0; top:0; height:4px; border-radius:2px; background:var(--acc);}
+  .track .thumb{position:absolute; width:16px; height:16px; border-radius:50%;
+    background:var(--acc); transform:translateY(-6px); margin-left:-8px;
+    box-shadow:0 1px 4px rgba(0,0,0,.4);}
+  .srow{display:flex; justify-content:space-between; align-items:center; margin-top:16px;}
+  .reset{font-size:12px; color:rgba(255,255,255,.50);}
+  .done{width:88px; height:34px; border-radius:17px; background:var(--acc);
+    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600;}
+  .tip{margin-top:14px; font-size:11.5px; line-height:1.7; color:#7d848f;}
+  .tip b{color:#c9ced8;}
+  .tagrow{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
+  .tag{font-size:11px; padding:4px 9px; border-radius:10px; background:#1e222a; color:#8f97a4;
+    border:1px solid #272c35;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 1. 底栏 -->
+  <div class="col">
+    <p class="cap"><b>① 底栏 52dp</b>（原 66dp → 约 0.8cm）</p>
+    <div class="phone">
+      <div class="video">
+        <div class="veil"></div>
+        <div class="ctl">
+          <span>▶</span><span>02:34 / 06:12</span>
+          <span style="margin-left:auto">弹</span><span>1080P</span><span>⛶</span>
+        </div>
+        <div class="bar"><i></i></div>
+      </div>
+      <div class="vtitle">把旧手机改造成一台只放音乐的播放器</div>
+      <div class="vmeta">32.4万播放 · 1.1万弹幕 · 2 小时前</div>
+
+      <div class="cmt-head"><h3>评论 862</h3><span>按热度</span></div>
+      <div class="cmt">
+        <div class="av"></div>
+        <div class="cbody">
+          <div class="cname">橘子汽水不加冰</div>
+          <div class="ctext">这个改造思路太干净了，桌面连一根线都看不见</div>
+          <div class="cmeta"><span>3分钟前 · 128 赞</span><span>回复</span></div>
+        </div>
+      </div>
+      <div class="cmt">
+        <div class="av"></div>
+        <div class="cbody">
+          <div class="cname">拆机狂魔</div>
+          <div class="ctext">供电那部分能不能单独出一期？想照着抄作业</div>
+          <div class="cmeta"><span>12分钟前 · 43 赞</span><span>回复</span></div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <div class="cell on">
+          <svg viewBox="0 0 24 24" fill="#fb7299"><path d="M12 3.2 3.4 10.3c-.3.2-.4.5-.4.9V20c0 .6.4 1 1 1h5v-6h6v6h5c.6 0 1-.4 1-1v-8.8c0-.4-.1-.7-.4-.9L12 3.2Z"/></svg>
+          <b>首页</b>
+        </div>
+        <div class="cell">
+          <svg viewBox="0 0 24 24" fill="#9b9fa8"><path d="m12 3 2.7 5.7 6.1.8-4.5 4.2 1.2 6.1L12 16.9 6.5 19.8l1.2-6.1L3.2 9.5l6.1-.8L12 3Z"/></svg>
+          <b>动态</b>
+        </div>
+        <div class="cell">
+          <svg viewBox="0 0 24 24" fill="#9b9fa8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5v1H4v-1Z"/></svg>
+          <b>我的</b>
+        </div>
+      </div>
+    </div>
+    <div class="tagrow">
+      <span class="tag">图标 24→20dp</span>
+      <span class="tag">文字 11→9.5sp</span>
+      <span class="tag">胶囊 54→46dp</span>
+      <span class="tag">底边距 18→10dp</span>
+    </div>
+  </div>
+
+  <!-- 2. 楼中楼 -->
+  <div class="col">
+    <p class="cap"><b>② 评论区楼中楼</b>（主评论下展开二级回复）</p>
+    <div class="phone" style="height:700px">
+      <div style="padding:14px 0 0;">
+        <div class="cmt" style="border-bottom:none; padding-top:6px;">
+          <div class="av"></div>
+          <div class="cbody">
+            <div class="cname">拆机狂魔</div>
+            <div class="ctext">供电那部分能不能单独出一期？想照着抄作业</div>
+            <div class="cmeta"><span>12分钟前 · 43 赞</span><span>回复</span></div>
+
+            <div class="thread">
+              <div class="tmore" style="color:#7a8290">展开后直接列出二级回复</div>
+              <div class="tsub">
+                <div class="av"></div>
+                <div class="cbody">
+                  <div class="tx"><span class="tn">UP主</span>：下期就拆供电，用的是 5V 诱骗 + 降压模块</div>
+                  <div class="tm">8分钟前 · 21 赞 &nbsp;&nbsp; 回复</div>
+                </div>
+              </div>
+              <div class="tsub">
+                <div class="av"></div>
+                <div class="cbody">
+                  <div class="tx"><span class="tn">橘子汽水不加冰</span>：同求，我卡在电源管理这一块了</div>
+                  <div class="tm">5分钟前 · 6 赞 &nbsp;&nbsp; 回复</div>
+                </div>
+              </div>
+              <div class="tsub">
+                <div class="av"></div>
+                <div class="cbody">
+                  <div class="tx"><span class="tn">木头人</span>：蹲一个 BOM 清单</div>
+                  <div class="tm">3分钟前 · 2 赞 &nbsp;&nbsp; 回复</div>
+                </div>
+              </div>
+              <div class="tmore">正在加载回复…</div>
+              <div class="tmore" style="color:#7a8290">收起 ∧</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cmt">
+          <div class="av"></div>
+          <div class="cbody">
+            <div class="cname">橘子汽水不加冰</div>
+            <div class="ctext">这个改造思路太干净了，桌面连一根线都看不见</div>
+            <div class="cmeta"><span>3分钟前 · 128 赞</span><span>回复</span></div>
+            <div class="thread">
+              <div class="tmore">共 3 条回复 &nbsp; 展开 ∨</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="position:absolute; left:0; right:0; bottom:0; background:#1f2229;
+        padding:8px 12px 10px; display:flex; gap:6px; align-items:center;">
+        <div style="flex:1; height:32px; border-radius:16px; background:#1e2229;
+          display:flex; align-items:center; padding:0 14px; font-size:12.5px; color:#c9ced8;">
+          回复 @拆机狂魔：</div>
+        <div style="width:22px; text-align:center; color:#8a909c; font-size:16px;">×</div>
+        <div style="height:32px; padding:0 16px; border-radius:16px; background:var(--acc);
+          display:flex; align-items:center; font-size:12px; font-weight:600;">发送</div>
+      </div>
+    </div>
+    <div class="tagrow">
+      <span class="tag">主评论自带 3 条预览</span>
+      <span class="tag">点开自动拉全量</span>
+      <span class="tag">子回复可再回复</span>
+      <span class="tag">发送带 root/parent</span>
+    </div>
+  </div>
+
+  <!-- 3. 弹幕设置 -->
+  <div class="col">
+    <p class="cap"><b>③ 弹幕调节</b>（长按「弹」打开）</p>
+    <div class="sheet">
+      <h4>弹幕设置</h4>
+      <div class="sub">拖动滑块即时生效，设置会自动记住</div>
+
+      <div class="lab">颜色（第 1 个为原色，保留 B 站彩色弹幕）</div>
+      <div class="dots">
+        <div class="dot rainbow sel"></div>
+        <div class="dot" style="background:#fff"></div>
+        <div class="dot" style="background:#ffeb3b"></div>
+        <div class="dot" style="background:#fb7299"></div>
+        <div class="dot" style="background:#4fc3f7"></div>
+        <div class="dot" style="background:#81c784"></div>
+        <div class="dot" style="background:#ba68c8"></div>
+        <div class="dot" style="background:#ff9800"></div>
+      </div>
+
+      <div class="row">
+        <div class="rh"><span>字号</span><em>100%</em></div>
+        <div class="track"><div class="line"><div class="fill" style="width:33%"></div>
+          <div class="thumb" style="left:33%"></div></div></div>
+      </div>
+      <div class="row">
+        <div class="rh"><span>不透明度</span><em>100%</em></div>
+        <div class="track"><div class="line"><div class="fill" style="width:100%"></div>
+          <div class="thumb" style="left:100%"></div></div></div>
+      </div>
+      <div class="row">
+        <div class="rh"><span>滚动速度（越大跑得越快）</span><em>100%</em></div>
+        <div class="track"><div class="line"><div class="fill" style="width:33%"></div>
+          <div class="thumb" style="left:33%"></div></div></div>
+      </div>
+      <div class="row">
+        <div class="rh"><span>显示区域（占画面高度）</span><em>100%</em></div>
+        <div class="track"><div class="line"><div class="fill" style="width:100%"></div>
+          <div class="thumb" style="left:100%"></div></div></div>
+      </div>
+      <div class="row">
+        <div class="rh"><span>同屏密度（最多几条）</span><em>40 条</em></div>
+        <div class="track"><div class="line"><div class="fill" style="width:43%"></div>
+          <div class="thumb" style="left:43%"></div></div></div>
+      </div>
+
+      <div class="srow">
+        <div class="reset">恢复默认</div>
+        <div class="done">完成</div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <b>显示区域</b> 单独起作用：拉到 40% 时弹幕只铺画面上半部分，下半屏完全不挡画面，
+      底部固定弹幕也会跟着落在区域内。<br>
+      <b>速度</b> 是整体缩放：50% 一条弹幕要飞 16 秒，200% 只要 4 秒。
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
