@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>哔小趣 v4.17.0 版面对比预览</title>
+<style>
+  :root{
+    --bg:#15171c; --card:#1e2128; --fg:#e8eaf0; --sub:#9aa0ab; --acc:#fb7299;
+    --ph-old:#2a2e36; --ph-new:#242833;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#0d0e11;color:var(--fg);
+       font-family:-apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;padding:24px}
+  h2{font-size:15px;margin:26px 0 10px;color:#cfd3dc;font-weight:600}
+  .cols{display:flex;gap:18px;flex-wrap:wrap}
+  .panel{flex:1 1 420px;min-width:360px}
+  .cap{font-size:12px;color:var(--sub);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .tag{font-size:10.5px;padding:1px 7px;border-radius:99px;border:1px solid #ffffff1f}
+  .tag.new{color:var(--acc);border-color:#fb729966;background:#fb729914}
+  .tag.old{color:#8a909b;border-color:#ffffff1a}
+  .phone{background:var(--bg);border-radius:18px;padding:12px;border:1px solid #ffffff12}
+  .bar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .av{width:34px;height:34px;border-radius:50%;background:#262a33}
+  .search{flex:1;height:36px;border-radius:19px;background:linear-gradient(180deg,#ffffff14,#2b303b3d,#21273033);
+          border:1px solid #ffffff14;display:flex;align-items:center;padding:0 12px;color:#8f96a3;font-size:12px}
+  .mail{width:32px;height:32px;border-radius:50%;background:#ffffff14}
+  .ch{display:flex;gap:6px;justify-content:center;font-size:14px;margin-bottom:10px}
+  .ch span{padding:4px 8px;border-radius:8px}
+  .ch span.on{color:var(--acc);background:#fb72991f}
+  .grid{display:grid;gap:12px 10px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .card{min-width:0}
+  .cov{width:100%;aspect-ratio:16/9;border-radius:var(--r);background:var(--ph);position:relative;overflow:hidden}
+  .cov::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,#ffffff0a,#0000 45%)}
+  .t{font-size:13px;line-height:var(--ls);margin-top:6px;color:var(--fg);
+     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .s{font-size:11px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .old{--r:9px;--ls:1.32px;--ph:var(--ph-old);gap:12px 8px}
+  .new{--r:12px;--ls:1.34px;--ph:var(--ph-new);gap:12px 10px}
+  /* 搜索宽屏右栏 */
+  .wide{display:flex;background:var(--bg);border-radius:16px;overflow:hidden;border:1px solid #ffffff12}
+  .wl{flex:2;padding:14px}
+  .wr{flex:1;border-left:1px solid #ffffff1f;padding:14px 12px}
+  .wt{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+  .wt small{font-size:11.5px;color:var(--sub);font-weight:400}
+  .hot{display:flex;align-items:center;gap:6px;padding:8px 6px;border-radius:14px;font-size:13px}
+  .hot.oldrow{padding:7px 4px;border-radius:0}
+  .no{width:24px;text-align:center;font-size:12px;color:var(--sub)}
+  .no.t3{color:var(--acc)}
+  .kw{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .heat{font-size:11px;color:var(--sub)}
+  .glass{background:linear-gradient(180deg,#ffffff12,#3339453a,#2a2f3a30);border:1px solid #ffffff12}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{font-size:12px;padding:5px 11px;border-radius:12px;background:#ffffff0f;border:1px solid #ffffff12}
+  .note{font-size:12px;color:#7d848f;margin-top:8px;line-height:1.7}
+  .k{display:flex;gap:8px;align-items:flex-start;margin-top:8px;font-size:12.5px;color:#aeb4be;line-height:1.65}
+  .k b{color:var(--acc);font-weight:600;flex:0 0 auto}
+</style>
+</head>
+<body>
+
+<h2>① 首页推荐网格 —— 圆角更大 / 占位更柔 / 间距更松</h2>
+<div class="cols">
+  <div class="panel">
+    <div class="cap"><span class="tag old">v4.16.1</span>圆角 9dp · 间距 8dp · 占位 #2a2e36</div>
+    <div class="phone">
+      <div class="bar"><div class="av"></div><div class="search">搜索你感兴趣的内容</div><div class="mail"></div></div>
+      <div class="ch"><span class="on">推荐</span><span>热门</span><span>动画</span><span>影视</span></div>
+      <div class="grid g2 old">
+        <div class="card"><div class="cov"></div><div class="t">奶酪与芝士，评测结果到底有什么区别</div><div class="s">大胖哥子 · 182.7万播放 · 12:58</div></div>
+        <div class="card"><div class="cov"></div><div class="t">全国前10座金矿都匹配在一起了！</div><div class="s">沉家豪言白居易 · 219.7万播放 · 08:43</div></div>
+        <div class="card"><div class="cov"></div><div class="t">谁也没告诉我，在家做蛋糕这么简单</div><div class="s">粉面米菲 · 100.3万播放 · 00:37</div></div>
+        <div class="card"><div class="cov"></div><div class="t">我用AI做了个游戏《显卡教父的复仇》</div><div class="s">百男山茶 · 7.7万播放 · 03:16</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="cap"><span class="tag new">v4.17.0</span>圆角 12dp · 间距 10dp · 占位 #242833（跟随主题）</div>
+    <div class="phone">
+      <div class="bar"><div class="av"></div><div class="search">搜索你感兴趣的内容</div><div class="mail"></div></div>
+      <div class="ch"><span class="on">推荐</span><span>热门</span><span>动画</span><span>影视</span></div>
+      <div class="grid g2 new">
+        <div class="card"><div class="cov"></div><div class="t">奶酪与芝士，评测结果到底有什么区别</div><div class="s">大胖哥子 · 182.7万播放 · 12:58</div></div>
+        <div class="card"><div class="cov"></div><div class="t">全国前10座金矿都匹配在一起了！</div><div class="s">沉家豪言白居易 · 219.7万播放 · 08:43</div></div>
+        <div class="card"><div class="cov"></div><div class="t">谁也没告诉我，在家做蛋糕这么简单</div><div class="s">粉面米菲 · 100.3万播放 · 00:37</div></div>
+        <div class="card"><div class="cov"></div><div class="t">我用AI做了个游戏《显卡教父的复仇》</div><div class="s">百男山茶 · 7.7万播放 · 03:16</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="note">占位底色从「刺眼深灰 #2a2e36」换成跟随主题的柔和灰蓝（深色 #242833 / 浅色 #e9ebf0），
+全 App 14 处封面与头像占位已统一，不再各写各的。</div>
+
+<h2>② 宽屏搜索页右侧热搜栏 —— 20 条 → 10 条，删掉重复的「搜索发现」</h2>
+<div class="cols">
+  <div class="panel">
+    <div class="cap"><span class="tag old">v4.16.1</span>20 条平铺 · 无底框 · 底部另有「搜索发现」</div>
+    <div class="wide">
+      <div class="wl">
+        <div class="search" style="margin-bottom:12px">搜索关键词 / BV号 / av号</div>
+        <div class="note" style="margin:0">输入后点搜索；点击结果直接播放</div>
+        <div class="chips"><span class="chip">周杰伦</span><span class="chip">原神</span><span class="chip">罗翔</span><span class="chip">三体</span></div>
+      </div>
+      <div class="wr">
+        <div class="wt">bilibili 热搜 <small>完整榜单 ›</small></div>
+        <div class="hot oldrow"><span class="no t3">1</span><span class="kw">神舟二十四号发射成功</span><span class="heat">134万</span></div>
+        <div class="hot oldrow"><span class="no t3">2</span><span class="kw">戴领华聊AI时代要培养什么能力</span><span class="heat">122万</span></div>
+        <div class="hot oldrow"><span class="no t3">3</span><span class="kw">哥德巴赫猜想会不会被AI证明</span><span class="heat">121万</span></div>
+        <div class="hot oldrow"><span class="no">4</span><span class="kw">中国空间站 从住标间到三室一厅</span><span class="heat">115万</span></div>
+        <div class="hot oldrow"><span class="no">5</span><span class="kw">BLG Xun来啦</span><span class="heat">98万</span></div>
+        <div class="hot oldrow"><span class="no">6</span><span class="kw">隐秘神二十四号发射央视直播幕后</span><span class="heat">84万</span></div>
+        <div class="hot oldrow"><span class="no">7</span><span class="kw">盘点赛季至今拉完了的NBA球星</span><span class="heat">80万</span></div>
+        <div class="hot oldrow"><span class="no">8</span><span class="kw">看复现5前需要了解哪些知识</span><span class="heat">78万</span></div>
+        <div class="hot oldrow"><span class="no">9</span><span class="kw">BLG赛前宣传片是怎么拍的</span><span class="heat">41万</span></div>
+        <div class="hot oldrow"><span class="no">10</span><span class="kw">航天员中载荷专家是谁的</span><span class="heat">24万</span></div>
+        <div class="hot oldrow"><span class="no">11</span><span class="kw">T1官宣Zeus回归</span><span class="heat">23万</span></div>
+        <div class="hot oldrow"><span class="no">12</span><span class="kw">青雅和白小纯在雪山交心对话</span><span class="heat">14万</span></div>
+        <div class="wt" style="margin-top:16px;font-size:13px">搜索发现</div>
+        <div class="chips"><span class="chip">哔哩哔哩</span><span class="chip">日常</span><span class="chip">手机</span><span class="chip">游戏</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="cap"><span class="tag new">v4.17.0</span>10 条 · 每条圆角玻璃底 + 按下反馈 · 右栏只留热搜</div>
+    <div class="wide">
+      <div class="wl">
+        <div class="search" style="margin-bottom:12px">搜索关键词 / BV号 / av号</div>
+        <div class="note" style="margin:0">输入后点搜索；点击结果直接播放</div>
+        <div class="chips"><span class="chip">周杰伦</span><span class="chip">原神</span><span class="chip">罗翔</span><span class="chip">三体</span></div>
+      </div>
+      <div class="wr">
+        <div class="wt">bilibili 热搜 <small>TOP 10</small></div>
+        <div class="hot glass"><span class="no t3">1</span><span class="kw">神舟二十四号发射成功</span><span class="heat">134万</span></div>
+        <div class="hot glass"><span class="no t3">2</span><span class="kw">戴领华聊AI时代要培养什么能力</span><span class="heat">122万</span></div>
+        <div class="hot glass"><span class="no t3">3</span><span class="kw">哥德巴赫猜想会不会被AI证明</span><span class="heat">121万</span></div>
+        <div class="hot glass"><span class="no">4</span><span class="kw">中国空间站 从住标间到三室一厅</span><span class="heat">115万</span></div>
+        <div class="hot glass"><span class="no">5</span><span class="kw">BLG Xun来啦</span><span class="heat">98万</span></div>
+        <div class="hot glass"><span class="no">6</span><span class="kw">隐秘神二十四号发射央视直播幕后</span><span class="heat">84万</span></div>
+        <div class="hot glass"><span class="no">7</span><span class="kw">盘点赛季至今拉完了的NBA球星</span><span class="heat">80万</span></div>
+        <div class="hot glass"><span class="no">8</span><span class="kw">看复现5前需要了解哪些知识</span><span class="heat">78万</span></div>
+        <div class="hot glass"><span class="no">9</span><span class="kw">BLG赛前宣传片是怎么拍的</span><span class="heat">41万</span></div>
+        <div class="hot glass"><span class="no">10</span><span class="kw">航天员中载荷专家是谁的</span><span class="heat">24万</span></div>
+        <div class="note">右侧原本还有一块「搜索发现」，与左侧页头的「大家都在搜」内容重复，已删除。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>③ 本轮各项改动对照</h2>
+<div class="k"><b>封面</b><span>可见封面池 4 线程 MAX_PRIORITY / 预取池 2 线程 MIN_PRIORITY；同 URL 并发去重只下载一次；滚动时预取后续 8 张；尺寸按「目标×1.15」换算、够用不换；解码采样不超过目标的 1.6 倍；超时 5s/9s。</span></div>
+<div class="k"><b>画质</b><span>默认由「自动（最高可用）」改为 <b style="color:var(--fg)">720P</b>（老用户也统一从 720P 起步）；点播放页「画质」可随时切回，之后的选择会被记住。</span></div>
+<div class="k"><b>解码</b><span>新增「硬解优先」：区分硬件/软件解码器，同分辨率优先挑有硬解的轨道 —— 不再在手机上悄悄软解 HEVC/AV1。</span></div>
+<div class="k"><b>线路</b><span>4 条 → 6 条；新增同高度同编码的其他轨道、以及零成本的备用 CDN 域名替换；竞速错峰 25ms→16ms，超时收紧。</span></div>
+<div class="k"><b>渲染</b><span>Surface 改 RGBX_8888（省一次降位深转换，GPU 合成更均匀）；音频统一走媒体通道 AudioAttributes；播放中不息屏。</span></div>
+<div class="k"><b>清理</b><span>15 处重复的 https 写法收敛为 1 个方法；删除从未被引用的 FeedAdapter.round()；修复 build.sh 吞掉编译报错的问题。</span></div>
+
+</body>
+</html>
