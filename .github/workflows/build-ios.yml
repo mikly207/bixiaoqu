@@ -2,10 +2,6 @@ name: Build iOS IPA (哔小趣 v4.73.0)
 on:
   workflow_dispatch:
 
-concurrency:
-  group: ios-build
-  cancel-in-progress: true
-
 jobs:
   build:
     runs-on: macos-14
