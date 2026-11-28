@@ -5,37 +5,35 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
           ref: flutter-ios
 
-      # 缓存 Flutter SDK，省去每次下载（提速关键）
+      # 缓存 Flutter SDK
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.5'
           channel: 'stable'
           cache: true
 
-      # 缓存 CocoaPods Pods（提速关键）
-      - name: Cache Pods
-        uses: actions/cache@v4
-        with:
-          path: ios/Pods
-          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
-
       - run: flutter pub get
 
-      # 直接 release 构建，跳过签名，一条命令出 ipa
+      # 用 Flutter 3.24 重新生成 iOS 工程配置，修复旧模板 Podfile 引用 RunnerTests 但工程无此 target 的报错
+      - name: Regenerate iOS project
+        run: flutter create --platforms=ios --org com.bixiaoqu --project-name bixiaoqu .
+
+      # 构建 release IPA（跳过签名，产出未签名包可侧载）
       - name: Build IPA
         run: flutter build ipa --release --no-codesign
 
-      - name: Locate IPA
-        run: find build/ios/ipa -name '*.ipa' -exec cp {} out/bixiaoqu-v4.73.0-ios.ipa \; || true
+      - name: List IPA
+        run: ls -lh build/ios/ipa/ || true
 
       - uses: actions/upload-artifact@v4
         with:
           name: bixiaoqu-v4.73.0-ipa
           path: build/ios/ipa/*.ipa
+          if-no-files-found: error
           retention-days: 90
