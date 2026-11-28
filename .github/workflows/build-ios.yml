@@ -11,7 +11,6 @@ jobs:
         with:
           ref: flutter-ios
 
-      # 缓存 Flutter SDK
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.5'
@@ -20,11 +19,15 @@ jobs:
 
       - run: flutter pub get
 
-      # 用 Flutter 3.24 重新生成 iOS 工程配置，修复旧模板 Podfile 引用 RunnerTests 但工程无此 target 的报错
-      - name: Regenerate iOS project
-        run: flutter create --platforms=ios --org com.bixiaoqu --project-name bixiaoqu .
+      # 关键修复：删除旧 ios 目录后用 Flutter 3.24 全新生成，
+      # 保证 project.pbxproj 与 Podfile 的 RunnerTests target 一致（否则 CocoaPods 1.17 报错）
+      - name: Fresh iOS project
+        run: |
+          rm -rf ios
+          flutter create --platforms=ios --org com.bixiaoqu --project-name bixiaoqu .
+          grep -c RunnerTests ios/Runner.xcodeproj/project.pbxproj || true
 
-      # 构建 release IPA（跳过签名，产出未签名包可侧载）
+      # 构建 release IPA（跳过签名）
       - name: Build IPA
         run: flutter build ipa --release --no-codesign
 
