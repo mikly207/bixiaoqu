@@ -45,3 +45,12 @@ jobs:
           path: out/bixiaoqu-v4.73.0-ios.ipa
           if-no-files-found: error
           retention-days: 90
+
+      # 上传到 Release（走 CDN，下载比 artifact 快得多）
+      - name: Upload to Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view v4.73.0 --repo ${{ github.repository }} >/dev/null 2>&1 || \
+            gh release create v4.73.0 --title "哔小趣 v4.73.0" --notes "iOS IPA 未签名版，可侧载" --repo ${{ github.repository }}
+          gh release upload v4.73.0 out/bixiaoqu-v4.73.0-ios.ipa --clobber --repo ${{ github.repository }}
