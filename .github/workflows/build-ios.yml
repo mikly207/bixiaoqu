@@ -66,19 +66,47 @@ jobs:
             gh release create v4.73.0 --title "哔小趣 v4.73.0" --notes "iOS IPA（iOS 12+，未签名，可交由蒲公英/fir.im 等平台签名分发）" --repo ${{ github.repository }}
           gh release upload v4.73.0 out/bixiaoqu-v4.73.0-ios.ipa --clobber --repo ${{ github.repository }}
 
-      # 上传到蒲公英分发平台（自动签名分发，需配置 secrets：PGYER_API_KEY）
-      - name: Upload to Pgyer
+      # 上传到蒲公英分发平台（API v2：getCOSToken → COS 上传 → 轮询出下载页）
+      - name: Upload to Pgyer (API v2)
         if: ${{ env.PGYER_API_KEY != '' }}
         env:
           PGYER_API_KEY: ${{ secrets.PGYER_API_KEY }}
+          PGYER_INSTALL_TYPE: ${{ vars.PGYER_INSTALL_TYPE || '1' }}
+          PGYER_PASSWORD: ${{ secrets.PGYER_PASSWORD }}
         run: |
-          echo "上传到蒲公英，由平台企业签名后生成可直装下载页..."
-          RESP=$(curl -s -F "file=@out/bixiaoqu-v4.73.0-ios.ipa" \
-            -F "api_key=$PGYER_API_KEY" \
-            -F "buildInstallType=2" \
-            https://upload.pgyer.com/apiv1/app/upload)
-          echo "$RESP"
-          echo "$RESP" > out/pgyer_response.json
+          set -e
+          echo "① 获取上传凭证..."
+          TOKEN=$(curl -s -X POST https://www.pgyer.com/apiv2/app/getCOSToken \
+            -d "_api_key=$PGYER_API_KEY" -d "buildType=ios" \
+            -d "buildInstallType=$PGYER_INSTALL_TYPE" \
+            ${PGYER_PASSWORD:+--data-urlencode "buildPassword=$PGYER_PASSWORD"} \
+            -d "buildDescription=哔小趣 v4.73.0 第三方代签分发" -d "buildUpdateDescription=iOS 12+ 兼容版")
+          echo "$TOKEN"
+          CODE=$(echo "$TOKEN" | python3 -c "import sys,json;print(json.load(sys.stdin).get('code'))")
+          [ "$CODE" = "0" ] || { echo "getCOSToken 失败"; exit 1; }
+          ENDPOINT=$(echo "$TOKEN" | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['endpoint'])")
+          CKEY=$(echo "$TOKEN" | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['key'])")
+          SIG=$(echo "$TOKEN" | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['params']['signature'])")
+          SECTOKEN=$(echo "$TOKEN" | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['params']['x-cos-security-token'])")
+
+          echo "② 上传 IPA 到 COS..."
+          curl -s -o /dev/null -w "上传 HTTP %{http_code}\n" -X POST "$ENDPOINT" \
+            -F "key=$CKEY" -F "signature=$SIG" -F "x-cos-security-token=$SECTOKEN" \
+            -F "x-cos-meta-file-name=bixiaoqu-v4.73.0-ios.ipa" \
+            -F "file=@out/bixiaoqu-v4.73.0-ios.ipa"
+
+          echo "③ 轮询发布结果..."
+          for i in $(seq 1 30); do
+            INFO=$(curl -s "https://www.pgyer.com/apiv2/app/buildInfo?_api_key=$PGYER_API_KEY&buildKey=$CKEY")
+            ICODE=$(echo "$INFO" | python3 -c "import sys,json;print(json.load(sys.stdin).get('code'))")
+            if [ "$ICODE" = "0" ]; then
+              echo "$INFO" | tee out/pgyer_response.json
+              SHORT=$(echo "$INFO" | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['buildShortcutUrl'])")
+              echo "::notice::蒲公英代签完成，下载页 https://www.pgyer.com/$SHORT"
+              break
+            fi
+            echo "发布中($i/30)，等待..."; sleep 4
+          done
 
       # 上传到 fir.im 分发平台（备选，需配置 secrets：FIR_TOKEN）
       - name: Upload to fir.im
