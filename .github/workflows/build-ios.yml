@@ -27,6 +27,12 @@ jobs:
           rm -rf ios
           flutter create --platforms=ios --org com.bixiaoqu --project-name bixiaoqu .
 
+      # 锁定最低系统版本 iOS 12.0（现代 Xcode 工具链物理下限，覆盖 iOS 12→27）
+      - name: Set deployment target iOS 12
+        run: |
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 12.0;/g' ios/Runner.xcodeproj/project.pbxproj
+          grep -m1 'IPHONEOS_DEPLOYMENT_TARGET' ios/Runner.xcodeproj/project.pbxproj
+
       # 构建 release（--no-codesign 产出 xcarchive）
       - name: Build archive
         run: flutter build ipa --release --no-codesign
@@ -54,5 +60,32 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release view v4.73.0 --repo ${{ github.repository }} >/dev/null 2>&1 || \
-            gh release create v4.73.0 --title "哔小趣 v4.73.0" --notes "iOS IPA 未签名版，可侧载" --repo ${{ github.repository }}
+            gh release create v4.73.0 --title "哔小趣 v4.73.0" --notes "iOS IPA（iOS 12+，未签名，可交由蒲公英/fir.im 等平台签名分发）" --repo ${{ github.repository }}
           gh release upload v4.73.0 out/bixiaoqu-v4.73.0-ios.ipa --clobber --repo ${{ github.repository }}
+
+      # 上传到蒲公英分发平台（自动签名分发，需配置 secrets：PGYER_API_KEY）
+      - name: Upload to Pgyer
+        if: ${{ secrets.PGYER_API_KEY != '' }}
+        env:
+          PGYER_API_KEY: ${{ secrets.PGYER_API_KEY }}
+        run: |
+          echo "上传到蒲公英，由平台企业签名后生成可直装下载页..."
+          RESP=$(curl -s -F "file=@out/bixiaoqu-v4.73.0-ios.ipa" \
+            -F "api_key=$PGYER_API_KEY" \
+            -F "buildInstallType=2" \
+            https://upload.pgyer.com/apiv1/app/upload)
+          echo "$RESP"
+          echo "$RESP" > out/pgyer_response.json
+
+      # 上传到 fir.im 分发平台（备选，需配置 secrets：FIR_TOKEN）
+      - name: Upload to fir.im
+        if: ${{ secrets.FIR_TOKEN != '' }}
+        env:
+          FIR_TOKEN: ${{ secrets.FIR_TOKEN }}
+        run: |
+          echo "上传到 fir.im，由平台签名分发..."
+          curl -s -X POST \
+            -F "file=@out/bixiaoqu-v4.73.0-ios.ipa" \
+            -F "token=$FIR_TOKEN" \
+            -F "bundleId=com.bixiaoqu.bixiaoqu" \
+            https://api.fir.im/apps | tee out/fir_response.json
