@@ -8,6 +8,9 @@ jobs:
     permissions:
       contents: write
     timeout-minutes: 30
+    env:
+      PGYER_API_KEY: ${{ secrets.PGYER_API_KEY }}
+      FIR_TOKEN: ${{ secrets.FIR_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -65,7 +68,7 @@ jobs:
 
       # 上传到蒲公英分发平台（自动签名分发，需配置 secrets：PGYER_API_KEY）
       - name: Upload to Pgyer
-        if: ${{ secrets.PGYER_API_KEY != '' }}
+        if: ${{ env.PGYER_API_KEY != '' }}
         env:
           PGYER_API_KEY: ${{ secrets.PGYER_API_KEY }}
         run: |
@@ -79,7 +82,7 @@ jobs:
 
       # 上传到 fir.im 分发平台（备选，需配置 secrets：FIR_TOKEN）
       - name: Upload to fir.im
-        if: ${{ secrets.FIR_TOKEN != '' }}
+        if: ${{ env.FIR_TOKEN != '' }}
         env:
           FIR_TOKEN: ${{ secrets.FIR_TOKEN }}
         run: |
