@@ -19,24 +19,29 @@ jobs:
 
       - run: flutter pub get
 
-      # 关键修复：删除旧 ios 目录后用 Flutter 3.24 全新生成，
-      # 保证 project.pbxproj 与 Podfile 的 RunnerTests target 一致（否则 CocoaPods 1.17 报错）
+      # 删除旧 ios 目录后用 Flutter 3.24 全新生成，保证 pbxproj 与 Podfile target 一致
       - name: Fresh iOS project
         run: |
           rm -rf ios
           flutter create --platforms=ios --org com.bixiaoqu --project-name bixiaoqu .
-          grep -c RunnerTests ios/Runner.xcodeproj/project.pbxproj || true
 
-      # 构建 release IPA（跳过签名）
-      - name: Build IPA
+      # 构建 release（--no-codesign 产出 xcarchive）
+      - name: Build archive
         run: flutter build ipa --release --no-codesign
 
-      - name: List IPA
-        run: ls -lh build/ios/ipa/ || true
+      # 手动打包 IPA：从 xcarchive 提取 Runner.app → Payload → zip
+      - name: Pack IPA
+        run: |
+          APP=$(find build/ios/archive/Runner.xcarchive -name "Runner.app" -type d | head -1)
+          echo "Found app: $APP"
+          mkdir -p Payload out
+          cp -R "$APP" Payload/
+          zip -qry out/bixiaoqu-v4.73.0-ios.ipa Payload
+          ls -lh out/
 
       - uses: actions/upload-artifact@v4
         with:
           name: bixiaoqu-v4.73.0-ipa
-          path: build/ios/ipa/*.ipa
+          path: out/bixiaoqu-v4.73.0-ios.ipa
           if-no-files-found: error
           retention-days: 90
