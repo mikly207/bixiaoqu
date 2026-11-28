@@ -1,0 +1,43 @@
+name: Build iOS IPA (哔小趣 v4.73.0)
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ios-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      # 缓存 Flutter SDK，省去每次下载（提速关键）
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: true
+
+      # 缓存 CocoaPods Pods（提速关键）
+      - name: Cache Pods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+
+      - run: flutter pub get
+
+      # 直接 release 构建，跳过签名，一条命令出 ipa
+      - name: Build IPA
+        run: flutter build ipa --release --no-codesign
+
+      - name: Locate IPA
+        run: find build/ios/ipa -name '*.ipa' -exec cp {} out/bixiaoqu-v4.73.0-ios.ipa \; || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bixiaoqu-v4.73.0-ipa
+          path: build/ios/ipa/*.ipa
+          retention-days: 90
