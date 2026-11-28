@@ -1,7 +1,0 @@
-name: Test macOS Latest
-on: workflow_dispatch
-jobs:
-  test:
-    runs-on: macos-latest
-    steps:
-      - run: echo "macos-latest works"
